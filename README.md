@@ -1,3 +1,9 @@
+Fork from https://github.com/benschmaus/web-midi-console because I needed a convenient way of sending hexadecimal values without having to manually convert them to decimals.
+
+Unless you need that, you are probably better off using the original repo.
+
+Original Readme below:
+
 # web-midi-console
 Web MIDI Chrome app for viewing messages from connected MIDI devices and sending messages to them.
 
