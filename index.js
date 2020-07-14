@@ -109,6 +109,48 @@ onMIDIMessage: function(message) {
 },
 
 initTerminal: function() {
+
+	hexTarget = "TD-3" 
+
+  jQuery(function($, undefined) {
+    $('#jsTermHex').terminal(function(hexInput, term) {
+        if (hexInput !== '') {
+            try {
+            console.log("> try hex")
+            console.log(hexInput)
+            
+            	command = `device("${hexTarget}").hex([${hexInput}])`
+            	
+            	command = command.replace('[', "['")
+            	command = command.replace(']', "']")
+            	
+            	console.log(command)
+            
+                var result = window.eval(command);
+                console.log("> result")
+                if (result !== undefined) {
+                    term.echo(new String(result));
+                }
+            } catch(e) {
+                term.error(new String(e));
+            }
+        } else {
+           term.echo('');
+        }
+    }, {
+        greetings: "Type something like AA 0B 1C here",
+        name: 'MIDI Console',
+        height: 80,
+        // adjust width relative to textarea
+        width: parseInt($("#messageBox").css("width").substring(0, 3)) - 16,
+        prompt: '> '
+    })
+  });
+
+
+
+
+
     jQuery(function($, undefined) {
     $('#jsTerm').terminal(function(command, term) {
         if (command !== '') {
@@ -156,6 +198,12 @@ initTerminal: function() {
         prompt: '> '
     });
   });
+  
+  
+
+  
+  
+  
 }
 
 };

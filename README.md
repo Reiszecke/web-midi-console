@@ -1,4 +1,4 @@
-Fork from https://github.com/benschmaus/web-midi-console because I needed a convenient way of sending hexadecimal values without having to manually convert them to decimals.
+Fork from https://github.com/benschmaus/web-midi-console because I needed a convenient way of sending hexadecimal values without having to manually convert them to decimals. Replace `hexTarget = "TD-3" ` in index.js with whatever your target is gonna be and you can simply enter something like `AA 0B 1C` in the hexBox and it will turn the input into `device("TD-3").raw([170,11,28])`. So basically you don't have to convert and type everything out. It's a small utility that I needed to reverse-engineer above-mentioned synth.
 
 Unless you need that, you are probably better off using the original repo.
 
