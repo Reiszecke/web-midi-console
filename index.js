@@ -113,7 +113,31 @@ initTerminal: function() {
     $('#jsTerm').terminal(function(command, term) {
         if (command !== '') {
             try {
+            console.log("> try")
+            console.log(command)
+            
+            	if(command.includes('hex')) {
+            	
+            	/*
+            	
+            		Reiszecke change: This is a dirty fix so that I can pass hex values
+            							as I need them to comfortably try out some stuff
+            							without having to convert hex to dec every time.
+            							
+            							See the `this.hex` function for reference.
+            	
+            	*/
+            	
+            		console.log("HEX!")
+            		
+            		command = command.replace('[', "['")
+            		command = command.replace(']', "']")
+            		
+            		console.log(command)
+               	}
+            
                 var result = window.eval(command);
+                console.log("> result")
                 if (result !== undefined) {
                     term.echo(new String(result));
                 }
@@ -237,6 +261,63 @@ var device = function(outputName) {
     self.current.send(data);
     return self;
    }
+   
+   
+   
+   
+   // Convert a hex string to a byte array
+function hexToBytes(hex) {
+    for (var bytes = [], c = 0; c < hex.length; c += 2)
+    bytes.push(parseInt(hex.substr(c, 2), 16));
+    return bytes;
+}
+
+// Convert a byte array to a hex string
+function bytesToHex(bytes) {
+    for (var hex = [], i = 0; i < bytes.length; i++) {
+        var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+        hex.push((current >>> 4).toString(16));
+        hex.push((current & 0xF).toString(16));
+    }
+    return hex.join("");
+}
+   
+   //https://stackoverflow.com/a/56737583/2875404
+   function SplitByString(source, splitBy) {
+  var splitter = splitBy.split('');
+  splitter.push([source]); //Push initial value
+
+  return splitter.reduceRight(function(accumulator, curValue) {
+    var k = [];
+    accumulator.forEach(v => k = [...k, ...v.split(curValue)]);
+    return k;
+  });
+}
+   
+	this.hex = function(data) {
+	console.log(typeof data);
+    console.log("sending hex data: " + data);
+    
+    dataArray = Array.from(data)[0]
+    console.log(dataArray)
+    
+    hexValueArray = SplitByString(dataArray, ", ") //takes comma as well as space-separated
+    
+    console.log(hexValueArray)
+    
+    toSend = Array()
+    
+    for (var index in hexValueArray) {
+    	hexVal = hexValueArray[index]
+    	decVal =  hexToBytes(hexVal)
+    	console.log(decVal)
+    	toSend.push(decVal)
+    }
+    
+    
+    self.current.send(toSend);
+    return self;
+   }
 
    this.toString = function() {
     var s = "no connected devices";
@@ -254,6 +335,7 @@ function po(obj) {
 }
 
 function po2(obj) {
+	console.log("po2 !!!")
     var s = "{ ";
     for (prop in obj) {
         s += prop + "=";
