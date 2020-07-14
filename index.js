@@ -1,3 +1,38 @@
+   // Convert a hex string to a byte array
+function hexToBytes(hex) {
+    for (var bytes = [], c = 0; c < hex.length; c += 2)
+    bytes.push(parseInt(hex.substr(c, 2), 16));
+    return bytes;
+}
+
+//https://stackoverflow.com/a/54095276/2875404
+function byteToHex(byte) {
+  // convert the possibly signed byte (-128 to 127) to an unsigned byte (0 to 255).
+  // if you know, that you only deal with unsigned bytes (Uint8Array), you can omit this line
+  const unsignedByte = byte & 0xff;
+
+  // If the number can be represented with only 4 bits (0-15), 
+  // the hexadecimal representation of this number is only one char (0-9, a-f). 
+  if (unsignedByte < 16) {
+    return '0' + unsignedByte.toString(16).toUpperCase();
+  } else {
+    return unsignedByte.toString(16).toUpperCase();
+  }
+}
+   
+   //https://stackoverflow.com/a/56737583/2875404
+   function SplitByString(source, splitBy) {
+  var splitter = splitBy.split('');
+  splitter.push([source]); //Push initial value
+
+  return splitter.reduceRight(function(accumulator, curValue) {
+    var k = [];
+    accumulator.forEach(v => k = [...k, ...v.split(curValue)]);
+    return k;
+  });
+}
+
+
 var midi = {
 
 onMIDISuccess: function(midiAccess) {
@@ -100,12 +135,30 @@ onPortStateChange: function(event) {
 },
 
 onMIDIMessage: function(message) {
+	console.log("DD")
     console.log(message);
+	console.log("DD")
+	
+	hexResponse = Array()
+	
+	for (var index in message.data) {
+    	decVal = message.data[index]
+    	hexVal =  byteToHex(decVal)
+    	//console.log("D")
+    	//console.log(hexVal)
+    	hexResponse.push(hexVal)
+    	
+    }
+    
+    console.log(hexResponse)
+    
 
     var port = message.target;
 	var data = message.data;
 	var msgConsole = document.getElementById("midiMessages").elements["console"];
     msgConsole.value = port.name + ": " + data + "\n" + msgConsole.value;
+    msgConsole.value = port.name + ": " + hexResponse.toString().split(",").join(" ") + "\n" + msgConsole.value;
+    msgConsole.value =  "\n" + msgConsole.value;
 },
 
 initTerminal: function() {
@@ -313,34 +366,7 @@ var device = function(outputName) {
    
    
    
-   // Convert a hex string to a byte array
-function hexToBytes(hex) {
-    for (var bytes = [], c = 0; c < hex.length; c += 2)
-    bytes.push(parseInt(hex.substr(c, 2), 16));
-    return bytes;
-}
 
-// Convert a byte array to a hex string
-function bytesToHex(bytes) {
-    for (var hex = [], i = 0; i < bytes.length; i++) {
-        var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
-        hex.push((current >>> 4).toString(16));
-        hex.push((current & 0xF).toString(16));
-    }
-    return hex.join("");
-}
-   
-   //https://stackoverflow.com/a/56737583/2875404
-   function SplitByString(source, splitBy) {
-  var splitter = splitBy.split('');
-  splitter.push([source]); //Push initial value
-
-  return splitter.reduceRight(function(accumulator, curValue) {
-    var k = [];
-    accumulator.forEach(v => k = [...k, ...v.split(curValue)]);
-    return k;
-  });
-}
    
 	this.hex = function(data) {
 	console.log(typeof data);
@@ -358,7 +384,7 @@ function bytesToHex(bytes) {
     for (var index in hexValueArray) {
     	hexVal = hexValueArray[index]
     	decVal =  hexToBytes(hexVal)
-    	console.log(decVal)
+    	//console.log(decVal)
     	toSend.push(decVal)
     }
     
